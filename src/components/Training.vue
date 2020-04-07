@@ -8,8 +8,21 @@
           #{{exercise.id}} {{exercise.name}}
         </span>
         <ol class="ol-inside" v-if="exercise.open === true">
-          <li class="li-inside" v-for="occurence in exercise.occurences" v-bind:key="occurence.date" @click="change(exercise.id)">
-            {{occurence.date}} -> {{occurence.weight}}kg
+          <li  class="li-inside" v-for="occurence in exercise.occurences" v-bind:key="occurence.id">
+            <div v-if="editing === exercise.id && editingOccurence === occurence.id">
+              <div class="div-in-row">
+                <label>Date:</label>
+                <input type="text" v-model="occurence.date">
+              </div>
+              <div class="div-in-row">
+                <label>Weight:</label>
+                <input type="text" v-model="occurence.weight">
+              </div>
+              <button @click="save()">SAVE</button>
+            </div>
+            <div class="" v-else @click="change(exercise.id, occurence.id)">
+              {{occurence.date}} -> {{occurence.weight}}kg
+            </div>
           </li>
         </ol>
       </li>
@@ -24,7 +37,9 @@ export default {
     return {
       hover: false,
       clicked: [0, 0, 0],
-      exercises: []
+      exercises: [],
+      editing: 0,
+      editingOccurence: 0
     }
   },
 
@@ -45,14 +60,17 @@ export default {
         "open": false,
         "occurences": [
           {
+            "id": 1,
             "date": '01.04.2020',
             "weight": 50
           },
           {
+            "id": 2,
             "date": '15.03.2020',
             "weight": 45
           },
           {
+            "id": 3,
             "date": '02.03.2020',
             "weight": 40
           },
@@ -64,14 +82,17 @@ export default {
         "open": false,
         "occurences": [
           {
+            "id": 1,
             "date": '01.04.2020',
             "weight": 50
           },
           {
+            "id": 2,
             "date": '15.03.2020',
             "weight": 45
           },
           {
+            "id": 3,
             "date": '02.03.2020',
             "weight": 40
           },
@@ -83,14 +104,17 @@ export default {
         "open": false,
         "occurences": [
           {
+            "id": 1,
             "date": '01.04.2020',
             "weight": 50
           },
           {
+            "id": 2,
             "date": '15.03.2020',
             "weight": 45
           },
           {
+            "id": 3,
             "date": '02.03.2020',
             "weight": 40
           },
@@ -103,8 +127,14 @@ export default {
       this.exercises[id - 1].open = !this.exercises[id - 1].open
     },
 
-    change(id) {
-      this.exercises[id].name = "test"
+    change(id, occurenceId) {
+        this.editing = id
+        this.editingOccurence = occurenceId
+    },
+
+    save() {
+      this.editing = 0
+      this.editingOccurence = 0
     }
 
   }
@@ -146,15 +176,37 @@ ol li span {
   background: lightcoral;
 }
 
+div {
+  padding: 0.25rem;
+}
+
+.div-in-row {
+  display: inline-block;
+  margin-right: 1rem;
+}
+
+button {
+  border: coral;
+  background: coral;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
 span:hover {
   background: pink;
+}
+
+input {
+  margin: 0;
+  font-size: 1rem;
+  width: 5rem;
 }
 
 .li-inside {
   background:cornflowerblue;
   border: grey;
   border-style: solid;
-  padding: 0.25rem;
+  padding: 0rem;
   margin-left: 1rem;
 }
 
@@ -166,5 +218,7 @@ span:hover {
   background:cornflowerblue;
   padding: 1rem;
 }
+
+
 
 </style>
