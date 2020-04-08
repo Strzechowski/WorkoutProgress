@@ -1,6 +1,6 @@
 <template>
 <div>
-  <h1>Trainig</h1>
+  <h3>Trainig</h3>
   <div class="list-div">
     <ol>
       <li v-for="exercise in exercises" v-bind:key="exercise.id">
@@ -8,19 +8,19 @@
           #{{exercise.id}} {{exercise.name}}
         </span>
         <ol class="ol-inside" v-if="editing === exercise.id">
-          <li  class="li-inside" v-for="occurence in exercise.occurences" v-bind:key="occurence.id">
+          <li class="li-inside" v-for="occurence in exercise.occurences" v-bind:key="occurence.id">
             <div v-if="editing === exercise.id && editingOccurence === occurence.id">
-              <div class="div-in-row">
+              <div>
                 <label>Date:</label>
                 <input type="text" v-model="occurence.date">
               </div>
-              <div class="div-in-row">
+              <div>
                 <label>Weight:</label>
                 <input type="text" v-model="occurence.weight">
               </div>
               <button @click="save()">SAVE</button>
             </div>
-            <div class="" v-else @click="change(exercise.id, occurence.id)">
+            <div v-else @click="change(occurence.id)">
               {{occurence.date}} -> {{occurence.weight}}kg
             </div>
           </li>
@@ -29,11 +29,11 @@
               + New occurence
             </div>
             <div v-if="editing === exercise.id && editingOccurence === 'addOccurence'">
-              <div class="div-in-row">
+              <div>
                 <label>Date:</label>
                 <input type="text" v-model="newDate">
               </div>
-              <div class="div-in-row">
+              <div>
                 <label>Weight:</label>
                 <input type="text" v-model="newWeight">
               </div>
@@ -156,11 +156,11 @@ export default {
 
     listPopUp(id) {
       this.editing == id ? this.editing = 0 : this.editing = id
+      this.editingOccurence = 0
     },
 
-    change(id, occurenceId) {
-        this.editing = id
-        this.editingOccurence = occurenceId
+    change(occurenceId) {
+      this.editingOccurence = occurenceId
     },
 
     save() {
@@ -206,13 +206,7 @@ export default {
   width: 70vw;
 }
 
-@media screen and (max-width: 768px){
-  .list-div {
-    width:95vw;
-  }
-}
-
-h1 {
+h3 {
   margin: 0;
 }
 
@@ -224,32 +218,23 @@ ol {
 }
 
 ol li {
-  margin: 0rem 0rem 0.5rem 0rem;
-  font-size: 1.5rem;
+  margin: 0rem 0rem 0.5em 0rem;
   background: lightcoral;
 }
 
 ol li span {
+  max-block-size: 8vh;
+  font-size: 1em;
   display: block;
-  font-size: 2rem;
-  padding: 1rem;
+  padding: 0.5em;
   background: lightcoral;
-}
-
-div {
-  padding: 0.25rem;
-}
-
-.div-in-row {
-  display: inline-block;
-  margin-right: 1rem;
 }
 
 button {
   border: coral;
   background: coral;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
+  padding: 0.5em 0.5em;
+  border-radius: 0.25em;
 }
 
 span:hover {
@@ -258,8 +243,8 @@ span:hover {
 
 input {
   margin: 0;
-  font-size: 1rem;
-  width: 5rem;
+  font-size: 0.75em;
+  width: 5em;
 }
 
 .li-inside {
@@ -267,7 +252,8 @@ input {
   border: grey;
   border-style: solid;
   padding: 0rem;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  font-size: 0.9em;
 }
 
 .li-inside:hover {
@@ -279,6 +265,33 @@ input {
   padding: 1rem;
 }
 
+@media screen and (max-width: 768px){
+  .list-div {
+    width:80vw;
+  }
 
+}
+
+
+@media screen and (max-width: 568px){
+  .list-div {
+    width:100vw;
+  }
+
+  .li-inside {
+    margin-left: 0;
+  }
+}
+
+@media screen and (orientation:landscape) {
+  ol li span {
+    font-size: 0.75em;
+    padding: 0.25em;
+  }
+
+  .li-inside {
+    font-size: 0.70em;
+  }
+}
 
 </style>
