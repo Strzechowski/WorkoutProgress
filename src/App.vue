@@ -1,16 +1,34 @@
 <template>
   <div id="app">
-    <Training/>
+    <Exercises v-bind:exercises="exercises" v-bind:trainingName="trainingName"/>
   </div>
 </template>
 
 <script>
-import Training from './components/Training.vue'
+import Exercises from './components/Exercises.vue'
+import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
-    Training
+    Exercises
+  },
+  data() {
+    return {
+      exercises: null,
+      trainingName: 'Training A'
+    }
+  },
+  mounted() {
+    this.getApiData()
+  },
+
+  methods: {
+    async getApiData() {
+      await axios.get("http://127.0.0.1:8000/exercises/")
+      .then(res => (this.exercises = res.data))
+      .catch(err => console.log(err));
+    }
   }
 }
 </script>
@@ -26,6 +44,27 @@ export default {
   align-items: center;
   color: #2c3e50;
   font-size: 8vmin;
+}
+
+input {
+  margin: 0;
+  font-size: 0.75em;
+  width: 3em;
+  text-align: center;
+}
+
+.edit {
+  background: lemonchiffon;
+  background: lightblue;
+}
+
+button {
+  border: coral;
+  background: coral;
+  margin: 0.25em;
+  padding: 0.5em 0.5em;
+  border-radius: 0.25em;
+  font-size: 0.7em;
 }
 
 </style>
