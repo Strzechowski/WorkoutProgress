@@ -2,11 +2,11 @@
   <div id="exerciseList">
     <h3>{{trainingName}}</h3>
     <ol>
-      <li v-for="exercise in exercises" v-bind:key="exercise.id">
-        <span @click="getCurrentSets(exercise.id)">
-          #{{exercise.id}} {{exercise.name}}
+      <li v-for="(exercise, index) in exercises" v-bind:key="exercise.id">
+        <span @click="getCurrentSets(index)">
+          #{{index + 1}} {{exercise.name}}
         </span>
-        <Sets v-if="editing === exercise.id"
+        <Sets v-if="editing === index"
           v-bind:sets="sets"
           v-bind:parentExerciseId="exercise.id"
           @delete:set="deleteSet"
@@ -33,17 +33,18 @@ export default {
     data() {
       return {
         sets: [],
-        editing: 0
+        editing: -1
       }
     },
 
     methods: {
-      getCurrentSets(id) {
-        if (this.editing == id) {
-          this.editing = 0
+      getCurrentSets(index) {
+        console.log(index)
+        if (this.editing === index) {
+          this.editing = -1
         } else {
-          this.sets = this.exercises[id - 1].sets
-          this.editing = id
+          this.sets = this.exercises[index].sets
+          this.editing = index
         }
       },
       async postSet(newset) {
@@ -73,30 +74,6 @@ export default {
 </script>
 
 <style scoped>
-
-ol {
-  padding: 0;
-  list-style-position: inside;
-  list-style-type: none;
-  text-align: left;
-}
-
-ol li {
-  margin: 0rem 0rem 0.5em 0rem;
-  background: lightcoral;
-}
-
-ol li span {
-  max-block-size: 8vh;
-  font-size: 1em;
-  display: block;
-  padding: 0.5em;
-  background: lightcoral;
-}
-
-span:hover {
-  background: pink;
-}
 
 @media screen and (max-width: 568px){
   #exerciseList {

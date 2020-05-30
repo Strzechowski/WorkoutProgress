@@ -1,45 +1,49 @@
 <template>
-  <div id="tr">
-    Hello
-    <ul>
+  <div id="trainingsList">
+    <h3>Pick a training</h3>
+    <ol>
       <li v-for="training in trainings" v-bind:key="training.id">
-        <span @click="getCurrentSeries(training.id)">
+        <span @click="getCurrentTraining(training.id)">
           {{training.date}} {{training.name}}
         </span>
-        <Series v-if="editing === training.id" v-bind:series="series"/>
       </li>
-    </ul>
+    </ol>
   </div>
 </template>
 
 <script>
-import Series from './Series.vue'
 
 export default {
-    components: {
-      Series
-    },
-
     props: {
         trainings: Array,
-        editing: 0
     },
     data() {
       return {
         series: [],
+        editing: 0
       }
     },
 
     methods: {
-      getCurrentSeries(id) {
-        if (this.editing == id) {
-          this.editing = 0
-        } else {
-          this.series = trainings[id - 1].series
-          this.editing = id
-        }
+      getCurrentTraining(id) {
+        this.$emit("chooseTraining", id)
       }
     }
 
 }
 </script>
+
+<style scoped>
+
+@media screen and (max-width: 568px){
+  #trainingsList {
+    width:100vw;
+  }
+
+  .li-inside {
+    margin-left: 0;
+  }
+}
+
+
+</style>

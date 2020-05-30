@@ -14,7 +14,7 @@
           <button @click="saveSet()">CANCEL</button>
           <button @click="deleteSet(set.id)">DELETE</button>
         </div>
-        <div v-else @click="startEditingSet(set.id)" class="text">
+        <div v-else @click="startEditingSet(set)" class="text">
           {{set.repetitions}}reps X {{set.weight}}kg
         </div>
       </li>
@@ -58,8 +58,10 @@ export default {
         this.newWeight = 0
       },
 
-      startEditingSet(id) {
-        this.editing = id
+      startEditingSet(set) {
+        this.editing = set.id
+        this.newReps = set.repetitions
+        this.newWeight = set.weight
       },
 
       startAddingSet() {
@@ -93,19 +95,17 @@ export default {
 <style scoped>
 
 li {
-  background:cornflowerblue;
-  border: grey;
-  border-style:initial;
+  background:#D3D0CB;
   padding: 0;
   font-size: 0.9em;
 }
 
 li:hover {
-  background: lightblue;
+  background: #E7E5DF;
 }
 
 ol {
-  background:cornflowerblue;
+  background:#D3D0CB;
   list-style-type: none;
   text-align: center;
   padding: 0;
