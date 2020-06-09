@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <Login v-if="state === 'needsLogin'" v-on:logIn="openTrainings"/>
-    <Trainings v-else-if="state === 'training'" v-bind:trainings="trainings" v-on:chooseTraining="openTrainings"/>
-    <div id="exercisesDiv" v-else>
-      <button @click="openTrainings()">Change training</button>
+    <Login v-if="showLogin === true" v-on:logIn="openTrainings"/>
+    <Trainings v-if="showTrainings === true" v-bind:trainings="trainings" v-on:chooseTraining="openExercises"/>
+    <Exercises v-if="showExercises === true" v-bind:exercises="exercises" v-bind:trainingName="trainingName"/>
+    <div id="buttons" v-if="smallScreen === true">
+      <button v-if="showExercises === true" @click="openTrainings()">Change training</button>
       <button @click="logout()">Logout</button>
-      <Exercises  v-bind:exercises="exercises" v-bind:trainingName="trainingName"/>
     </div>
   </div>
 </template>
@@ -26,7 +26,11 @@ export default {
   },
   data() {
     return {
-      state: 'needsLogin',
+      showLogin: true,
+      showTrainings: false,
+      showExercises: false,
+      showSets: false,
+      smallScreen: false,
       exercises: null,
       trainings: null,
       trainingId: null,
@@ -45,30 +49,63 @@ export default {
       .then(res => (this.trainings = res.data.trainings))
       .catch(err => console.log(err));
     },
-    openTrainings(IdOrUsername) {
-      if (this.state != "training") {
-        this.state = "training"
-        this.getTrainings(IdOrUsername)
-      } else {
-        this.getExerciseData(IdOrUsername)
-        this.state = "exercises"
-      }
+    openTrainings(username) {
+        if (this.trainings === null) { this.getTrainings(username) }
+        this.checkViewType()
+        this.showTrainings = true
+      },
+    openExercises(id) {
+        this.getExerciseData(id)
+        this.checkViewType()
+        this.showExercises = true
+      },
+    openSets() {
+      this.checkViewType()
+      //this.getExerciseData(id)
+      this.showSets = true
     },
     logout() {
-      this.state = "needsLogin"
+      location.reload()
+    },
+    checkViewType() {
+      this.showLogin = false
+      if(screen.width < 800) {
+        this.resetViews()
+        this.smallScreen = true
+      } else {
+        this.smallScreen = false
+      }
+    },
+    resetViews() {
+      this.showExercises = false
+      this.showSets = false
+      this.showTrainings = false
     }
   }
 }
 </script>
 
 <style>
+@media (min-width: 800px) {
+  #trainingsList, #exerciseList {
+    display: inline-block;
+    max-width: 45%;
+    margin: 0px 20px;
+    vertical-align: top;
+    font-size: 5vh;
+  }
+  h3 {
+    height: 10vh;
+    font-size: 10;
+  }
+}
+
+
 #app {
   font-family: Courier, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  display: flex;
   text-align: center;
-  flex-direction: column;
   align-items: center;
   color: #2c3e50;
   font-size: 8vmin;

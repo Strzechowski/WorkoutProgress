@@ -34,6 +34,7 @@
         <input v-model="email" type="email" placeholder="Email">
       </div>
       <button>Sign Up</button>
+      <button @click="startLogin">Go back</button>
     </form>
 
     <div v-if="errors.length">
@@ -114,6 +115,9 @@ export default {
     },
     startCreatingAccount() {
       this.isLoginPage = false
+    },
+    startLogin() {
+      this.isLoginPage = true
     },
     async createAccount() {
       if (this.password != this.password2) {
