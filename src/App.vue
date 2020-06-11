@@ -1,12 +1,12 @@
 <template>
   <div id="app">
+    <div id="buttons">
+      <button v-if="smallScreen === true && showExercises === true" @click="openTrainings()">Change training</button>
+      <button v-if="showLogin != true" @click="logout()">Logout</button>
+    </div>
     <Login v-if="showLogin === true" v-on:logIn="openTrainings"/>
     <Trainings v-if="showTrainings === true" v-bind:trainings="trainings" v-on:chooseTraining="openExercises"/>
     <Exercises v-if="showExercises === true" v-bind:exercises="exercises" v-bind:trainingName="trainingName"/>
-    <div id="buttons" v-if="smallScreen === true">
-      <button v-if="showExercises === true" @click="openTrainings()">Change training</button>
-      <button @click="logout()">Logout</button>
-    </div>
   </div>
 </template>
 
@@ -59,6 +59,7 @@ export default {
         this.checkViewType()
         this.showExercises = true
       },
+    // TO DO - if needed
     openSets() {
       this.checkViewType()
       //this.getExerciseData(id)
@@ -89,14 +90,18 @@ export default {
 @media (min-width: 800px) {
   #trainingsList, #exerciseList {
     display: inline-block;
-    max-width: 45%;
+    max-width: 40%;
     margin: 0px 20px;
     vertical-align: top;
     font-size: 5vh;
   }
   h3 {
     height: 10vh;
-    font-size: 10;
+  }
+  #buttons {
+    margin-top: 30px;
+    max-width: 10%;
+    font-size: 5vh;
   }
 }
 
@@ -129,6 +134,15 @@ button {
   padding: 0.5em 0.5em;
   border-radius: 0.25em;
   font-size: 0.7em;
+}
+
+button:hover {
+  background: #EFCA49;
+}
+
+#buttons {
+  display: inline-block;
+
 }
 
 ol {

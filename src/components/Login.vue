@@ -111,7 +111,7 @@ export default {
         password: this.password
       })
       .then(resp => {this.$emit("logIn", this.username) && console.log(resp)})
-      .catch(this.errors.push("Incorrect login data."))
+      .catch(err => {console.log(err) && this.errors.push("Incorrect login data.")})
     },
     startCreatingAccount() {
       this.isLoginPage = false
@@ -144,6 +144,7 @@ input {
 
 ul, h5 {
   margin: 1rem;
+  padding: 0;
 }
 
 .err{

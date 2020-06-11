@@ -39,7 +39,6 @@ export default {
 
     methods: {
       getCurrentSets(index) {
-        console.log(index)
         if (this.editing === index) {
           this.editing = -1
         } else {
