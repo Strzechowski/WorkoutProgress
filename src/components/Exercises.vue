@@ -14,6 +14,20 @@
           @edit:set="putSet"
         />
       </li>
+      <li>
+        <div v-if="editing === 'newExercise'" class="center exerciseColors">
+          Creating exercise:
+          <div>
+            <label>Name: </label>
+            <input type="text" v-model="exerciseName">
+          </div>
+          <button @click="addNewExercise()">ADD</button>
+          <button @click="saveExercise()">CANCEL</button>
+        </div>
+        <span v-else @click="startAddingExercise()">
+          + New Exercise
+        </span>
+      </li>
     </ol>
   </div>
 </template>
@@ -28,16 +42,33 @@ export default {
     },
     props: {
         exercises: Array,
-        trainingName: null
+        trainingName: null,
+        parentTrainingId: null
     },
     data() {
       return {
         sets: [],
-        editing: -1
+        editing: -1,
+        exerciseName: null
       }
     },
-
     methods: {
+      startAddingExercise() {
+        this.editing = "newExercise"
+      },
+      addNewExercise() {
+        var newExer = {
+          "name": this.exerciseName,
+          "training": this.parentTrainingId
+        }
+        this.editing = -1
+
+        this.$emit("add:exercise", newExer);
+      },
+      saveExercise() {
+        this.editing = -1
+        this.exerciseName = ""
+      },
       getCurrentSets(index) {
         if (this.editing === index) {
           this.editing = -1
@@ -73,15 +104,23 @@ export default {
 </script>
 
 <style scoped>
-
 @media screen and (max-width: 568px){
   #exerciseList {
     width:100vw;
   }
-
-  .li-inside {
-    margin-left: 0;
-  }
 }
 
+.exerciseColors {
+  color: #E7E5DF;
+}
+
+.center {
+  list-style-type: none;
+  text-align: center;
+  padding: 0;
+}
+
+input {
+  width: 7em;
+}
 </style>

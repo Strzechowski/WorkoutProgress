@@ -5,8 +5,16 @@
       <button v-if="showLogin != true" @click="logout()">Logout</button>
     </div>
     <Login v-if="showLogin === true" v-on:logIn="openTrainings"/>
-    <Trainings v-if="showTrainings === true" v-bind:trainings="trainings" v-on:chooseTraining="openExercises"/>
-    <Exercises v-if="showExercises === true" v-bind:exercises="exercises" v-bind:trainingName="trainingName"/>
+    <Trainings v-if="showTrainings === true"
+      v-bind:trainings="trainings"
+      v-on:chooseTraining="openExercises"
+    />
+    <Exercises v-if="showExercises === true"
+      @add:exercise="postExercise"
+      v-bind:parentTrainingId="trainingId"
+      v-bind:exercises="exercises"
+      v-bind:trainingName="trainingName"
+    />
   </div>
 </template>
 
@@ -41,12 +49,17 @@ export default {
   methods: {
     async getExerciseData(id) {
       await axios.get(`http://127.0.0.1:8000/trainings/${id}/`)
-      .then(res => (this.exercises = res.data.exercises ) && (this.trainingName = res.data.name ))
+      .then(res => (this.exercises = res.data.exercises ) && (this.trainingName = res.data.name ) && (this.trainingId = res.data.id ))
       .catch(err => console.log(err));
     },
     async getTrainings(user) {
       await axios.get(`http://127.0.0.1:8000/users/${user}/`)
       .then(res => (this.trainings = res.data.trainings))
+      .catch(err => console.log(err));
+    },
+    async postExercise(newExercise) {
+      await axios.post("http://127.0.0.1:8000/exercises/", newExercise)
+      .then(({data}) => { this.exercises.push(data) && console.log(data) })
       .catch(err => console.log(err));
     },
     openTrainings(username) {
