@@ -3,16 +3,27 @@
     <h3>{{trainingName}}</h3>
     <ol>
       <li v-for="(exercise, index) in exercises" v-bind:key="exercise.id">
-        <span @click="getCurrentSets(index)">
+
+        <div v-if="editing === index">
+          <span class="block" @click="getCurrentSets(index)">
+            #{{index + 1}} {{exercise.name}}
+          </span>
+          <button class="block right" v-if="editing === index" @click="editExercise(exercise)" >
+            <i class="fa fa-bars"></i>
+          </button>
+          <Sets
+            v-bind:sets="sets"
+            v-bind:parentExerciseId="exercise.id"
+            @delete:set="deleteSet"
+            @add:set="postSet"
+            @edit:set="putSet"
+          />
+        </div>
+
+        <span v-else @click="getCurrentSets(index)">
           #{{index + 1}} {{exercise.name}}
         </span>
-        <Sets v-if="editing === index"
-          v-bind:sets="sets"
-          v-bind:parentExerciseId="exercise.id"
-          @delete:set="deleteSet"
-          @add:set="postSet"
-          @edit:set="putSet"
-        />
+
       </li>
       <li>
         <div v-if="editing === 'newExercise'" class="center exerciseColors">
@@ -61,17 +72,20 @@ export default {
           "name": this.exerciseName,
           "training": this.parentTrainingId
         }
-        this.editing = -1
+        this.editing = null
 
         this.$emit("add:exercise", newExer);
       },
+      editExercise(exerciseToModify) {
+        this.$emit("edit:exercise", exerciseToModify)
+      },
       saveExercise() {
-        this.editing = -1
+        this.editing = null
         this.exerciseName = ""
       },
       getCurrentSets(index) {
         if (this.editing === index) {
-          this.editing = -1
+          this.editing = null
         } else {
           this.sets = this.exercises[index].sets
           this.editing = index
@@ -118,6 +132,16 @@ export default {
   list-style-type: none;
   text-align: center;
   padding: 0;
+}
+
+.block {
+  display: inline-block;
+}
+
+.right {
+  margin-top: 2vh;
+  float: right;
+  position: relative;
 }
 
 input {

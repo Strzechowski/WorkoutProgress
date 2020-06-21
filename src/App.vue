@@ -4,6 +4,20 @@
       <button v-if="smallScreen === true && showExercises === true" @click="openTrainings()">Change training</button>
       <button v-if="showLogin != true" @click="logout()">Logout</button>
     </div>
+    <transition name="modify" v-if="modify">
+      <div class="modal">
+        <div v-if="modify === 'exercise'" class="modal-inside edit">
+          Editing exercise:
+          <div>
+            <label>Name: </label>
+            <input class="wide" type="text" v-model="newExerciseName">
+          </div>
+          <button @click="putExercise()">SAVE</button>
+          <button @click="closeEditingExercise()">CANCEL</button>
+          <button @click="deleteExercise()">DELETE</button>
+        </div>
+      </div>
+    </transition>
     <Login v-if="showLogin === true" v-on:logIn="openTrainings"/>
     <Trainings v-if="showTrainings === true"
       v-bind:trainings="trainings"
@@ -11,6 +25,7 @@
     />
     <Exercises v-if="showExercises === true"
       @add:exercise="postExercise"
+      @edit:exercise="startEditingExercise"
       v-bind:parentTrainingId="trainingId"
       v-bind:exercises="exercises"
       v-bind:trainingName="trainingName"
@@ -34,6 +49,10 @@ export default {
   },
   data() {
     return {
+      editing: null,
+      newExerciseName: null,
+      modify: null,
+      modifyId: null,
       showLogin: true,
       showTrainings: false,
       showExercises: false,
@@ -57,26 +76,47 @@ export default {
       .then(res => (this.trainings = res.data.trainings))
       .catch(err => console.log(err));
     },
+
     async postExercise(newExercise) {
       await axios.post("http://127.0.0.1:8000/exercises/", newExercise)
       .then(({data}) => { this.exercises.push(data) && console.log(data) })
       .catch(err => console.log(err));
     },
+    async putExercise() {
+      await axios.put(`http://127.0.0.1:8000/exercises/${this.modifyExercise.id}/`, {
+        "name": this.newExerciseName,
+        "training": this.trainingId
+      })
+      .then(({data}) => this.exercises = this.exercises.map(newExercise => (newExercise.id === this.modifyExercise.id ? data : newExercise)))
+      .catch(err => console.log(err));
+
+      this.closeEditingExercise()
+    },
+    async deleteExercise() {
+      await axios.delete(`http://127.0.0.1:8000/exercises/${this.modifyExercise.id}/`)
+      .then(this.exercises = this.exercises.filter(exercise => exercise.id != this.modifyExercise.id))
+      .catch(err => console.log(err));
+
+      this.closeEditingExercise()
+    },
+
     openTrainings(username) {
-        if (this.trainings === null) { this.getTrainings(username) }
-        this.checkViewType()
-        this.showTrainings = true
-      },
-    openExercises(id) {
-        this.getExerciseData(id)
-        this.checkViewType()
-        this.showExercises = true
-      },
-    // TO DO - if needed
-    openSets() {
+      if (this.trainings === null) { this.getTrainings(username) }
       this.checkViewType()
-      //this.getExerciseData(id)
-      this.showSets = true
+      this.showTrainings = true
+    },
+    openExercises(id) {
+      this.getExerciseData(id)
+      this.checkViewType()
+      this.showExercises = true
+    },
+    startEditingExercise(exerciseToModify) {
+      this.modify = "exercise"
+      this.modifyExercise = exerciseToModify
+    },
+    closeEditingExercise() {
+      this.newExerciseName = null
+      this.modify = null
     },
     logout() {
       location.reload()
@@ -117,7 +157,6 @@ export default {
     font-size: 5vh;
   }
 }
-
 
 #app {
   font-family: Courier, monospace;
@@ -182,5 +221,41 @@ span:hover {
   background: #0A0903;
 }
 
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 100%;
+  height: 100%;
+}
+
+.wide {
+  width: 10em;
+}
+
+.modal-inside {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 600px;
+  background-color: #D3D0CB;
+  border-radius: 16px;
+  padding: 25px;
+}
+
+
+.modify-enter-active,
+.modify-leave-active {
+ transition: transform .5s;
+}
+
+.modify-enter,
+.modify-leave-to {
+ transform: translateY(-50%) translateX(100vw);
+}
 
 </style>
